@@ -4,7 +4,7 @@ import express, { Express } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-// import codeBlockRoutes from "./routes/codeBlockRoutes";
+import codeBlockRoutes from "./routes/codeBlockRoutes";
 
 const initApp = (): Promise<Express> => {
   const promise = new Promise<Express>((resolve) => {
@@ -19,7 +19,7 @@ const initApp = (): Promise<Express> => {
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({ extended: true }));
       // Routes setup
-    //   app.use("/api/codeblocks", codeBlockRoutes);
+      app.use("/codeblocks", codeBlockRoutes);
 
       resolve(app);
     });
