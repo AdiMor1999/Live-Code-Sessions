@@ -1,0 +1,15 @@
+/* CodeEditor.css */
+
+.code-editor {
+  width: 100%;
+}
+
+.code-editor-textarea {
+  width: 100%;
+  height: 600px; 
+  padding: 10px;
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace; 
+  border: 1px solid #ccc;
+  resize: vertical; 
+}
