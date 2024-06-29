@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import axios from 'axios'; 
-// import './styles/Lobby.css';
+
 import { Container } from 'react-bootstrap';
 import CodeBlockList from '../components/CodeBlockList';
 import CodeBlock from "../components/CodeBlockList"
@@ -17,7 +17,6 @@ const HomePage: React.FC = () => {
   const [codeBlocks, setCodeBlocks] = useState<CodeBlock[]>([]);
 
   useEffect(() => {
-    // Fetch codeBlocks from backend
     const fetchCodeBlocks = async () => {
       try {
         const response = await axios.get<CodeBlock[]>('http://localhost:5000/codeblocks'); 

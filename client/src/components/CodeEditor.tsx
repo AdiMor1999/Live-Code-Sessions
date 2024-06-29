@@ -3,9 +3,9 @@ import Highlight from 'react-highlight';
 import '../styles/CodeEditor.css';
 
 interface CodeEditorProps {
-  code: string; //current code content.
-  onChange: (code: string) => void; //handle changes in the code
-  isEditable: boolean; //if the code editor is in editable
+  code: string; 
+  onChange: (code: string) => void; 
+  isEditable: boolean; 
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange, isEditable }) => {

@@ -8,19 +8,14 @@ import axios from 'axios';
 import { CodeBlock } from '../pages/HomePage'
 
 const CodeBlockPage: React.FC = () => {
-  //useParams extracts URL parameters
   const { id } = useParams<{ id: string }>();
-  //useState manages component state, such as role and code.
   const [role, setRole] = useState<'mentor' | 'student'>('student');
   const [code, setCode] = useState('');
   const [codeBlockTitle, setCodeBlockTitle] = useState<string>('');
   const [socket, setSocket] = useState<ReturnType<typeof initSocketConnection> | null>(null);
 
-  //useEffect is used to manage side effects like socket connections.
-  //This hook runs once when the component mounts and whenever the id parameter changes.
-  useEffect(() => {
-    console.log("hiiii")
 
+  useEffect(() => {
     const fetchCodeBlock = async () => {
       try {
         const response = await axios.get<CodeBlock>(`http://localhost:5000/codeblocks/${id}`);
@@ -36,28 +31,24 @@ const CodeBlockPage: React.FC = () => {
     
     setSocket(socket);
 
-    // Emit event to join a specific code block room
     socket.emit('joinCodeBlock', id); 
 
-    // Listen for the role assignment from the server
     socket.on('roleAssignment', ({ role }) => {
       setRole(role);
     });
 
-    // Listen for code updates from the server
     socket.on('codeUpdate', (newCode: string) => {
       setCode(newCode);
     });
 
     return () => {
-      socket.disconnect();//method is called when the component unmounts or when the id changes to cleanly disconnect from the WebSocket server.
+      socket.disconnect();
     };
   }, [id]);
 
   const handleCodeChange = (newCode: string) => {
     setCode(newCode);
     if (role === 'student') {
-      // Emit code change event to the server
       socket?.emit('codeChange', { codeBlockId: id, newCode });
     }
   };

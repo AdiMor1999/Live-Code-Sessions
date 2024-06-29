@@ -17,4 +17,3 @@ const App: React.FC = () => {
 
 export default App;
 
-//JavaScript functions that accept props (if any) and return React elements.
