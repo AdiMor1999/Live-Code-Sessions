@@ -19,7 +19,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const fetchCodeBlocks = async () => {
       try {
-        const response = await axios.get<CodeBlock[]>('live-code-sessions.up.railway.app/codeblocks'); 
+        const response = await axios.get<CodeBlock[]>('https://live-code-sessions.up.railway.app/codeblocks'); 
         setCodeBlocks(response.data);
       } catch (error) {
         console.error('Error fetching code blocks:', error);

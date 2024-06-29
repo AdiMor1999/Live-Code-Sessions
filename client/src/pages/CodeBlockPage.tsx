@@ -18,7 +18,7 @@ const CodeBlockPage: React.FC = () => {
   useEffect(() => {
     const fetchCodeBlock = async () => {
       try {
-        const response = await axios.get<CodeBlock>(`live-code-sessions.up.railway.app/codeblocks/${id}`);
+        const response = await axios.get<CodeBlock>(`https://live-code-sessions.up.railway.app/codeblocks/${id}`);
         setCodeBlockTitle(response.data.title);
         setCode(response.data.code);
       } catch (error) {
