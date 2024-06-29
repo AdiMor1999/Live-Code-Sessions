@@ -6,9 +6,17 @@ import CodeBlock from './models/codeBlock';
 
 initApp().then((app) => {
   const server = http.createServer(app);
-  const io = new Server(server);
+  const io = new Server(server, {
+    cors: {
+      origin: "*", // Allow all origins
+      methods: ["GET", "POST"], // Allowed HTTP methods
+      allowedHeaders: ["Content-Type"], // Allowed headers
+      credentials: true // Allow credentials
+    }
+  });
   // Keep track of users in each code block room
   const codeBlockRooms: { [key: string]: string[] } = {};
+  console.log(codeBlockRooms)
   //{ block1: ['user123', 'user456'] }
   
   io.on('connection', (socket) => {
