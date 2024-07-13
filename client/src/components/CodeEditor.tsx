@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Highlight from 'react-highlight';
 import '../styles/CodeEditor.css';
 
@@ -9,14 +9,29 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange, isEditable }) => {
+  const [localCode,setLocalCode] = useState(code)
+
+  useEffect(()=>{
+    setLocalCode(code);
+  },[code]);
+
+  useEffect(()=>{
+    const handler=setTimeout(()=>{
+      onChange(localCode);
+    },300);
+    return () =>{
+      clearTimeout(handler)
+    };
+  },[localCode,onChange]);
+  
   const handleCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(event.target.value);
+    setLocalCode(event.target.value);
   };
 
   return (
     <div className="code-editor">
       {isEditable ? (
-        <textarea value={code} onChange={handleCodeChange} className="code-editor-textarea" />
+        <textarea value={localCode} onChange={handleCodeChange} className="code-editor-textarea" />
       ) : (
         <Highlight className="javascript">{code}</Highlight>
       )}

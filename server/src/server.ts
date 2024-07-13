@@ -2,6 +2,7 @@ import initApp from "./app";
 import http from 'http';
 import { Server } from 'socket.io';
 import CodeBlock from './models/codeBlock';
+import { RateLimiter } from 'limiter';
 
 
 initApp().then((app) => {
@@ -17,6 +18,9 @@ initApp().then((app) => {
 
   const codeBlockRooms = new Map<string,string[]>();
   //{ block1: ['user123', 'user456'] }
+  const limiter = new RateLimiter({ tokensPerInterval: 1, interval: 1000 });
+  const typingTimeout = new Map<string, NodeJS.Timeout>(); // To keep track of typing timeouts for each socket
+
   
   io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
@@ -34,13 +38,34 @@ initApp().then((app) => {
     });
 
     socket.on('codeChange', async({ codeBlockId, newCode }) => {
-      try{
-        await CodeBlock.findByIdAndUpdate(codeBlockId, { code: newCode });
-        socket.to(codeBlockId).emit('codeUpdate', newCode);
-        console.log(`Broadcasting code change for code block: ${codeBlockId}`);
-      }catch(err){
-        console.error(`Error updating code block ${codeBlockId}:`, err);
-        socket.emit('error', 'Failed to update code block');
+      const socketId = socket.id;
+
+      // Clear any existing timeout for this socket
+      if (typingTimeout.has(socketId)) {
+        clearTimeout(typingTimeout.get(socketId));
+      }
+      // Set a new timeout to handle the final update
+      typingTimeout.set(socketId, setTimeout(async () => {
+        try {
+          await CodeBlock.findByIdAndUpdate(codeBlockId, { code: newCode });
+          socket.to(codeBlockId).emit('codeUpdate', newCode);
+          console.log(`Broadcasting final code change for code block: ${codeBlockId}`);
+        } catch (err) {
+          console.error(`Error updating code block ${codeBlockId}:`, err);
+          socket.emit('error', 'Failed to update code block');
+        }
+      }, 500));
+
+      // Perform rate-limited update
+      if (limiter.tryRemoveTokens(1)) {
+        try {
+          await CodeBlock.findByIdAndUpdate(codeBlockId, { code: newCode });
+          socket.to(codeBlockId).emit('codeUpdate', newCode);
+          console.log(`Broadcasting code change for code block: ${codeBlockId}`);
+        } catch (err) {
+          console.error(`Error updating code block ${codeBlockId}:`, err);
+          socket.emit('error', 'Failed to update code block');
+        }
       }
     });
 

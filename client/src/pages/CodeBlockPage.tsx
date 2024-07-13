@@ -47,11 +47,14 @@ const CodeBlockPage: React.FC = () => {
   }, [id]);
 
   const handleCodeChange = (newCode: string) => {
-    setCode(newCode);
-    if (role === 'student') {
-      socket?.emit('codeChange', { codeBlockId: id, newCode });
+    if (newCode !== code) { 
+      setCode(newCode);
+      if (role === 'student') {
+        socket?.emit('codeChange', { codeBlockId: id, newCode });
+      }
     }
   };
+  
 
   return (
  <Container fluid className="code-block-container">
